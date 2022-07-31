@@ -28,8 +28,7 @@ jobs:
           pip install opencv-python
           pip install matplotlib
           pip install dlib
-          curl http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
-          bunzip2 shape_predictor_68_face_landmarks.dat.bz2
+          wget https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
           mv shape_predictor_68_face_landmarks.dat learning_focus.dat
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
