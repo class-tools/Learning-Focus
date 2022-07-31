@@ -1,0 +1,42 @@
+---
+
+name: "CodeQL"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'python' ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Initialize environment
+        run: |
+          pip install opencv-python
+          pip install matplotlib
+          pip install dlib
+          curl http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2
+          bunzip2 shape_predictor_68_face_landmarks.dat.bz2
+          mv shape_predictor_68_face_landmarks.dat learning_focus.dat
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          config-file: ./.github/codeql/codeql-config.yml
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2

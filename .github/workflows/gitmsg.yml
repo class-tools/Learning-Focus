@@ -1,0 +1,29 @@
+---
+
+name: "Commit"
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+      - name: Check Commit Messages
+        env:
+          COMMIT_MSG: ${{ toJson(github.event.commits.*.message) }}
+        run: |
+          npm config set registry http://registry.npmjs.org/
+          yarn config set registry https://registry.yarnpkg.com
+          yarn add ct-git-commit-msg-std
+          node ./node_modules/ct-git-commit-msg-std/check.js -c "$PWD/.gitmsgrc.cjs" -e COMMIT_MSG
