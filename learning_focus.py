@@ -35,7 +35,7 @@ def save_total_time_data(time: str, totgreen: float, totred: float):
     try:
         with open('./recent.json', 'r', encoding = 'utf-8') as f:
             input = json.load(f)
-    except:
+    except (FileNotFoundError, json.decoder.JSONDecodeError):
         input = []
     with open('./recent.json', 'w', encoding = 'utf-8') as f:
         input.append([time, totgreen, totred])
@@ -48,8 +48,7 @@ def main():
     time.sleep(1)
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor('learning_focus.dat')
-    for j in range(10):
-        locals()['tracker' + str(j)] = dlib.correlation_tracker()
+    trackers = [dlib.correlation_tracker() for _ in range(10)]
     status = 'green'
     totgreen = 0
     totred = 0
@@ -59,13 +58,14 @@ def main():
         gray = cv2.cvtColor(src = frame, code = cv2.COLOR_BGR2GRAY)
         faces = detector(gray)
         for k in range(len(faces)):
-            locals()['tracker' + str(k)].start_track(frame, faces[k])
-            locals()['tracker' + str(k)].update(frame)
-            pos = locals()['tracker' + str(k)].get_position()
+            trackers[k].start_track(frame, faces[k])
+            trackers[k].update(frame)
+            pos = trackers[k].get_position()
             cv2.rectangle(frame, (int(pos.left() - 20), int(pos.top() - 20)), (int(pos.right() + 20), int(pos.bottom() + 20)), ((0, 0, 255) if status == 'red' else (0, 255, 0)), 2)
-        status = 'green'
         if len(faces) == 0:
             status = 'red'
+        else:
+            status = 'green'
         for face in faces:
             landmarks = predictor(image = gray, box = face)
             if 1.5 * (landmarks.part(37).y - landmarks.part(19).y) < (landmarks.part(8).y - landmarks.part(57).y):
@@ -73,33 +73,35 @@ def main():
                     b, g, r = frame[int(landmarks.part(40).x - 1), int(landmarks.part(40).y - 3)]
                 except IndexError:
                     status = 'red'
+                    break
                 if 0.11 * b + 0.59 * g + 0.3 * r >= 130:
                     status = 'red'
-                else:
-                    status = 'green'
+                    break
             if 2 * (landmarks.part(29).x - landmarks.part(1).x) < (landmarks.part(15).x - landmarks.part(29).x):
                 try:
                     b, g, r = frame[int(landmarks.part(42).x + 6), int(landmarks.part(42).y - 3)]
                 except IndexError:
                     status = 'red'
+                    break
                 if 0.11 * b + 0.59 * g + 0.3 * r >= 100:
                     status = 'red'
-                else:
-                    status = 'green'
+                    break
             if (landmarks.part(29).x - landmarks.part(1).x) > (2 * (landmarks.part(15).x - landmarks.part(29).x)):
                 try:
                     b, g, r = frame[int(landmarks.part(42).x + 4), int(landmarks.part(39).y - 3)]
                 except IndexError:
                     status = 'red'
+                    break
                 if 0.11 * b + 0.59 * g + 0.3 * r <= 100:
                     status = 'red'
-                else:
-                    status = 'green'
+                    break
             try:
                 if (landmarks.part(40).y - landmarks.part(38).y > 10) and (landmarks.part(46).y - landmarks.part(44).y < 10):
                     status = 'red'
+                    break
             except IndexError:
                 status = 'red'
+                break
             for n in range(68):
                 x = landmarks.part(n).x
                 y = landmarks.part(n).y
