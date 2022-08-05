@@ -1,5 +1,4 @@
 dlib
 numpy
-PyQt5
 matplotlib
 opencv-python

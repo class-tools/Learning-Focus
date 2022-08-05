@@ -25,9 +25,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Initialize environment
         run: |
-          pip install opencv-python
-          pip install matplotlib
-          pip install dlib
+          pip install -r requirements.txt
           wget https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
           mv shape_predictor_68_face_landmarks.dat learning_focus.dat
       - name: Initialize CodeQL

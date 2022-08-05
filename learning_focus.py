@@ -6,8 +6,7 @@ import time
 import numpy
 import tkinter
 import datetime
-import matplotlib.pyplot as plot
-from PyQt5.QtGui import QIcon
+import matplotlib
 
 # Functions
 def show_plot_image_data(input: list):
@@ -19,12 +18,8 @@ def show_plot_image_data(input: list):
         l1.append(totgreen)
         l2.append(totred)
     figure = plot.figure()
-    try:
-        figure.canvas.manager.window.title('Recent')
-        figure.canvas.manager.window.iconphoto(False, tkinter.PhotoImage(file = 'learning_focus.png'))
-    except AttributeError:
-        figure.canvas.manager.window.setWindowTitle('Recent')
-        figure.canvas.manager.window.setWindowIcon(QIcon('learning_focus.png'))
+    figure.canvas.manager.window.title('Recent')
+    figure.canvas.manager.window.iconphoto(False, tkinter.PhotoImage(file = 'learning_focus.png'))
     plot.title('Recent')
     plot.bar(numpy.arange(len(l1)), l1, width = 0.4, color = 'green', label = 'Good')
     for x, y in enumerate(l1):
@@ -127,4 +122,6 @@ def main():
 
 # Main
 if __name__ == '__main__':
+    matplotlib.use('TkAgg')
+    from matplotlib import pyplot as plot
     main()
