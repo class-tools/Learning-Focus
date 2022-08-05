@@ -6,7 +6,6 @@ import time
 import numpy
 import tkinter
 import datetime
-import matplotlib
 
 # Functions
 def show_plot_image_data(input: list):
@@ -122,6 +121,7 @@ def main():
 
 # Main
 if __name__ == '__main__':
-    matplotlib.use('TkAgg')
+    from matplotlib import use as usebackend
+    usebackend('TkAgg')
     from matplotlib import pyplot as plot
     main()
