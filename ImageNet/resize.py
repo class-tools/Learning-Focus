@@ -14,7 +14,7 @@ for cnt in range(len(classes)):
 	for index, file in enumerate(files):
 		img_path = r_dir + file
 		img = Image.open(img_path)
-		resize = transforms.Resize([20, 20])
+		resize = transforms.Resize([224, 224])
 		IMG = resize(img)
 		w_dir = new_dir + classes[cnt] + '\\'
 		if not os.path.exists(w_dir):
