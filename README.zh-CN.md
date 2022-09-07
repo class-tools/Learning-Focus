@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://ren-yc.github.io/assets/ClassTools/Learning-Focus.png" width="200">
+<img src="https://ren-yc.github.io/assets/ClassTools/LF.png" width="200">
 </p>
 
 <h1 align="center">- 专注学习 -</h1>

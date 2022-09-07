@@ -1,5 +1,6 @@
 # Libraries
 import os
+import sys
 import cv2
 import dlib
 import json
@@ -11,7 +12,7 @@ import datetime
 # Variables
 DEBUG_MODE = False
 MAX_TRACKERS = 50
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = (os.path.dirname(sys.executable) if hasattr(sys, 'frozen') else os.path.dirname(__file__))
 
 # Functions
 def show_plot_image_data(input: list):
