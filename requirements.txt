@@ -2,3 +2,4 @@ dlib
 numpy
 matplotlib
 opencv-python
+face_recognition
