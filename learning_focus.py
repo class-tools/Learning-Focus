@@ -29,10 +29,20 @@ class face:
 def parse_command_line_arguments():
 	global CONFIG
 	parser = argparse.ArgumentParser(description = 'Learning Focus command line arguments.')
-	parser.add_argument('--debug', action = 'store_true', help = 'Enable debug mode.')
-	parser.add_argument('--delay', type = int, default = -1, help = 'Delay time after predicting (Millisecond).')
-	parser.add_argument('--tolerance', type = float, default = 0.5, help = 'Tolerance for face comparing. (Between 0 and 1)')
+	parser.add_argument('--noconsole', action = 'store_true', help = 'Hide the console window. (Default: Disable)')
+	parser.add_argument('--device', type = int, default = 0, help = 'Device ID of the camera using. (Default: 0)')
+	parser.add_argument('--debug', action = 'store_true', help = 'Enable debug mode. (Default: Disable)')
+	parser.add_argument('--delay', type = int, default = -1, help = 'Delay time (Millisecond) after predicting. (Default: -1)')
+	parser.add_argument('--tolerance', type = float, default = 0.5, help = 'Tolerance (Between 0 and 1) for face comparing. (Default: 0.5)')
 	CONFIG = parser.parse_args()
+
+def set_console_window_status():
+	if os.name == 'nt' and CONFIG.noconsole == True:
+		import ctypes
+		hwnd = ctypes.windll.kernel32.GetConsoleWindow()
+		if hwnd != 0:
+			ctypes.windll.user32.ShowWindow(hwnd, 0)
+			ctypes.windll.kernel32.CloseHandle(hwnd)
 
 def get_class_face_array(input: list):
 	result = []
@@ -197,4 +207,5 @@ if __name__ == '__main__':
 	usebackend('TkAgg')
 	from matplotlib import pyplot as plot
 	parse_command_line_arguments()
+	set_console_window_status()
 	main()
