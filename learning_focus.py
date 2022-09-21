@@ -14,22 +14,40 @@ CONFIG = None
 PROGRAM_END = False
 BASE_DIR = (os.path.dirname(sys.executable) if hasattr(sys, 'frozen') else os.path.dirname(__file__))
 
+# Classes
+class face:
+	def __init__(self, currentface):
+		self.status = 'green'
+		self.face = currentface
+		self.totgreen = 0.0
+		self.totred = 0.0
+		self.timestampround = time.time()
+		self.timestampred = 0.0
+		self.appeared = True
+
 # Functions
 def parse_command_line_arguments():
 	global CONFIG
 	parser = argparse.ArgumentParser(description = 'Learning Focus command line arguments.')
 	parser.add_argument('--debug', action = 'store_true', help = 'Enable debug mode.')
 	parser.add_argument('--delay', type = int, default = -1, help = 'Delay time after predicting (Millisecond).')
+	parser.add_argument('--tolerance', type = float, default = 0.5, help = 'Tolerance for face comparing. (Between 0 and 1)')
 	CONFIG = parser.parse_args()
+
+def get_class_face_array(input: list):
+	result = []
+	for i in range(len(input)):
+		result.append(input[i].face)
+	return result
 
 def show_plot_image_data(input: list):
 	stick = []
 	l1 = []
 	l2 = []
-	for i in range(len(input[0])):
+	for i in range(len(input)):
 		stick.append('Face ' + str(i))
-		l1.append(round(input[2][i] / 60, 2))
-		l2.append(round(input[3][i] / 60, 2))
+		l1.append(round(input[i].totgreen / 60, 2))
+		l2.append(round(input[i].totred / 60, 2))
 	figure = plot.figure()
 	figure.canvas.manager.window.title('Statistics')
 	figure.canvas.manager.window.iconphoto(False, tkinter.PhotoImage(file = os.path.join(BASE_DIR, './learning_focus.png')))
@@ -40,7 +58,7 @@ def show_plot_image_data(input: list):
 	plot.bar(numpy.arange(len(l2)) + 0.4, l2, width = 0.4, color = 'red', label = 'Bad')
 	for x, y in enumerate(l2):
 		plot.text(x + 0.4, y, y)
-	plot.xticks(numpy.arange(len(input[0])) + 0.4 / 2, stick)
+	plot.xticks(numpy.arange(len(input)) + 0.4 / 2, stick)
 	plot.ylabel('Time (Minute)')
 	plot.legend(loc = 'upper left')
 	plot.show()
@@ -52,7 +70,7 @@ def main():
 	detector = dlib.get_frontal_face_detector()
 	predictor = dlib.shape_predictor(os.path.join(BASE_DIR, './learning_focus.dat'))
 	trackers = []
-	known = [[], [], [], [], [], [], []]
+	known = []
 	while PROGRAM_END == False:
 		timestampstart = time.time()
 		frame = cap.read()[1]
@@ -61,8 +79,8 @@ def main():
 		if len(faces) > len(trackers):
 			for _ in range(len(faces) - len(trackers)):
 				trackers.append(dlib.correlation_tracker())
-		for i in range(len(known[0])):
-			known[6][i] = False
+		for i in range(len(known)):
+			known[i].appeared = False
 		for i in range(len(faces)):
 			trackers[i].start_track(frame, faces[i])
 			trackers[i].update(frame)
@@ -71,82 +89,74 @@ def main():
 				currentface = face_recognition.face_encodings(frame[int(pos.top() - 20): int(pos.top() - 20) + int(pos.bottom() + 20), int(pos.left() - 20): int(pos.left() - 20) + int(pos.right() + 20)])[0]
 			except IndexError:
 				continue
-			if len(known[0]) == 0:
-				known[0].append('green')
-				known[1].append(currentface)
-				known[2].append(0.0)
-				known[3].append(0.0)
-				known[4].append(time.time())
-				known[5].append(0.0)
-				known[6].append(True)
-			compareresult = face_recognition.compare_faces(known[1], currentface)
-			for issame in compareresult:
-				if issame == False:
-					known[0].append('green')
-					known[1].append(currentface)
-					known[2].append(0.0)
-					known[3].append(0.0)
-					known[4].append(time.time())
-					known[5].append(0.0)
-					known[6].append(True)
+			if len(known) == 0:
+				known.append(face(currentface))
+			flag = False
+			compareresult = face_recognition.compare_faces(get_class_face_array(known), currentface, CONFIG.tolerance)
 			for issame in compareresult:
 				if issame == True:
-					id = next((i for i, val in enumerate(known[1]) if numpy.all(val == currentface)), -1)
-					known[6][id] = True
+					flag = True
 					break
-			cv2.rectangle(frame, (int(pos.left() - 20), int(pos.top() - 20)), (int(pos.right() + 20), int(pos.bottom() + 20)), ((0, 0, 255) if known[0][id] == 'red' else (0, 255, 0)), 2)
+			if flag == False:
+				known.append(face(currentface))
+			for issame in compareresult:
+				if issame == True:
+					id = compareresult.index(True)
+					known[id].appeared = True
+			cv2.rectangle(frame, (int(pos.left() - 20), int(pos.top() - 20)), (int(pos.right() + 20), int(pos.bottom() + 20)), ((0, 0, 255) if known[id].status == 'red' else (0, 255, 0)), 2)
+			frame = cv2.flip(cv2.putText(cv2.flip(frame, 1), 'Face ' + str(id), (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) - pos.left() - (pos.right() - pos.left() - len(str(id)) - 5) / 2), int(pos.top() - 25)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, ((0, 0, 255) if known[id].status == 'red' else (0, 255, 0)), 2), 1)
 		for i in range(len(faces)):
 			pos = trackers[i].get_position()
 			try:
 				currentface = face_recognition.face_encodings(frame[int(pos.top() - 20): int(pos.top() - 20) + int(pos.bottom() + 20), int(pos.left() - 20): int(pos.left() - 20) + int(pos.right() + 20)])[0]
 			except IndexError:
 				continue
-			for issame in face_recognition.compare_faces(known[1], currentface):
+			compareresult = face_recognition.compare_faces(get_class_face_array(known), currentface, CONFIG.tolerance)
+			for issame in compareresult:
 				if issame == True:
-					id = next((i for i, val in enumerate(known[1]) if numpy.all(val == currentface)), -1)
-					break
+					id = compareresult.index(True)
 			landmarks = predictor(image = gray, box = faces[i])
 			if 1.5 * (landmarks.part(37).y - landmarks.part(19).y) < (landmarks.part(8).y - landmarks.part(57).y):
 				try:
 					b, g, r = frame[int(landmarks.part(40).x - 1), int(landmarks.part(40).y - 3)]
 				except IndexError:
-					known[0][id] = 'red'
-					known[5][id] = time.time()
+					known[id].status = 'red'
+					known[id].timestampred = time.time()
 					break
 				if 0.11 * b + 0.59 * g + 0.3 * r >= 130:
-					known[0][id] = 'red'
-					known[5][id] = time.time()
+					known[id].status = 'red'
+					known[id].timestampred = time.time()
 					break
 			if 2 * (landmarks.part(29).x - landmarks.part(1).x) < (landmarks.part(15).x - landmarks.part(29).x):
 				try:
 					b, g, r = frame[int(landmarks.part(42).x + 6), int(landmarks.part(42).y - 3)]
 				except IndexError:
-					known[0][id] = 'red'
-					known[5][id] = time.time()
+					known[id].status = 'red'
+					known[id].timestampred = time.time()
 					break
 				if 0.11 * b + 0.59 * g + 0.3 * r >= 100:
-					known[0][id] = 'red'
-					known[5][id] = time.time()
+					known[id].status = 'red'
+					known[id].timestampred = time.time()
 					break
 			if (landmarks.part(29).x - landmarks.part(1).x) > (2 * (landmarks.part(15).x - landmarks.part(29).x)):
 				try:
 					b, g, r = frame[int(landmarks.part(42).x + 4), int(landmarks.part(39).y - 3)]
 				except IndexError:
-					known[0][id] = 'red'
-					known[5][id] = time.time()
+					known[id].status = 'red'
+					known[id].timestampred = time.time()
 					break
 				if 0.11 * b + 0.59 * g + 0.3 * r <= 100:
-					known[0][id] = 'red'
-					known[5][id] = time.time()
+					known[id].status = 'red'
+					known[id].timestampred = time.time()
 					break
 			try:
 				if (landmarks.part(40).y - landmarks.part(38).y > 10) and (landmarks.part(46).y - landmarks.part(44).y < 10):
-					known[0][id] = 'red'
-					known[5][id] = time.time()
+					known[id].status = 'red'
+					known[id].timestampred = time.time()
 					break
 			except IndexError:
-				known[0][id] = 'red'
-				known[5][id] = time.time()
+				known[id].status = 'red'
+				known[id].timestampred = time.time()
 				break
 			if CONFIG.debug == True:
 				for n in range(68):
@@ -156,17 +166,17 @@ def main():
 			if 'id' in locals():
 				if CONFIG.debug == True:
 					print(known)
-				if known[0][id] == 'green':
-					known[2][id] += time.time() - known[4][id]
+				if known[id].status == 'green':
+					known[id].totgreen += time.time() - known[id].timestampround
 				else:
-					known[3][id] += time.time() - known[4][id]
-					if time.time() - known[5][id] >= 3:
-						known[0][id] = 'green'
-				known[4][id] = time.time()
-		for i in range(len(known[0])):
-			if known[6][i] == False:
-				known[0][i] = 'red'
-				known[5][id] = time.time()
+					known[id].totred += time.time() - known[id].timestampround
+					if time.time() - known[id].timestampred >= 3:
+						known[id].status = 'green'
+				known[id].timestampround = time.time()
+		for i in range(len(known)):
+			if known[i].appeared == False:
+				known[i].status = 'red'
+				known[i].timestampred = time.time()
 		cv2.imshow('Face', cv2.flip(frame, 1))
 		while True:
 			if 0xFF & cv2.waitKey(100) == 27:
@@ -176,9 +186,9 @@ def main():
 				break
 	cap.release()
 	cv2.destroyAllWindows()
-	for i in range(len(known[0])):
-		print('Total good studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[2][i] / 60, 2)))
-		print('Total bad studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[3][i] / 60, 2)))
+	for i in range(len(known)):
+		print('Total good studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[i].totgreen / 60, 2)))
+		print('Total bad studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[i].totred / 60, 2)))
 	show_plot_image_data(known)
 
 # Main
