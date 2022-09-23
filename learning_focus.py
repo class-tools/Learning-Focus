@@ -24,15 +24,18 @@ class face:
 		self.timestampround = time.time()
 		self.timestampred = 0.0
 		self.appeared = True
+	def debug(self):
+		print('Status: ' + self.status + ', Totgreen: ' + str(self.totgreen) + ', Totred: ' + str(self.totred) + ', Timestampround: ' + str(self.timestampround) + ', Timestampred: ' + str(self.timestampred) + ', Appeared: ' + str(self.appeared))
 
 # Functions
 def parse_command_line_arguments():
 	global CONFIG
 	parser = argparse.ArgumentParser(description = 'Learning Focus command line arguments.')
-	parser.add_argument('--noconsole', action = 'store_true', help = 'Hide the console window. (Default: Disable)')
+	parser.add_argument('--correction', type = float, default = 0.05, help = 'Correction threshold (Between 0 and 1) of error face measurement. (Default: 0.05)')
 	parser.add_argument('--device', type = int, default = 0, help = 'Device ID of the camera using. (Default: 0)')
 	parser.add_argument('--debug', action = 'store_true', help = 'Enable debug mode. (Default: Disable)')
 	parser.add_argument('--delay', type = int, default = -1, help = 'Delay time (Millisecond) after predicting. (Default: -1)')
+	parser.add_argument('--noconsole', action = 'store_true', help = 'Hide the console window. (Default: Disable)')
 	parser.add_argument('--tolerance', type = float, default = 0.5, help = 'Tolerance (Between 0 and 1) for face comparing. (Default: 0.5)')
 	CONFIG = parser.parse_args()
 
@@ -75,7 +78,7 @@ def show_plot_image_data(input: list):
 
 def main():
 	global CONFIG, PROGRAM_END, BASE_DIR
-	cap = cv2.VideoCapture(0)
+	cap = cv2.VideoCapture(CONFIG.device)
 	time.sleep(1)
 	detector = dlib.get_frontal_face_detector()
 	predictor = dlib.shape_predictor(os.path.join(BASE_DIR, './learning_focus.dat'))
@@ -174,8 +177,6 @@ def main():
 					y = landmarks.part(n).y
 					cv2.circle(img = frame, center = (x, y), radius = 2, color = (255, 255, 255), thickness = -1)
 			if 'id' in locals():
-				if CONFIG.debug == True:
-					print(known)
 				if known[id].status == 'green':
 					known[id].totgreen += time.time() - known[id].timestampround
 				else:
@@ -187,6 +188,13 @@ def main():
 			if known[i].appeared == False:
 				known[i].status = 'red'
 				known[i].timestampred = time.time()
+				known[i].totred += time.time() - known[i].timestampround
+				known[i].timestampround = time.time()
+		if CONFIG.debug == True:
+			for i in range(len(known)):
+				print('Face ' + str(i) + ':')
+				known[i].debug()
+			print('---')
 		cv2.imshow('Face', cv2.flip(frame, 1))
 		while True:
 			if 0xFF & cv2.waitKey(100) == 27:
@@ -196,6 +204,9 @@ def main():
 				break
 	cap.release()
 	cv2.destroyAllWindows()
+	for i in range(len(known)):
+		if known[i].totgreen / (known[i].totgreen + known[i].totred) <= CONFIG.correction:
+			known.remove(known[i])
 	for i in range(len(known)):
 		print('Total good studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[i].totgreen / 60, 2)))
 		print('Total bad studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[i].totred / 60, 2)))
