@@ -8,6 +8,7 @@ import numpy
 import tkinter
 import argparse
 import face_recognition
+import face_recognition_models
 
 # Variables
 CONFIG = None
@@ -77,11 +78,11 @@ def show_plot_image_data(input: list):
 	plot.show()
 
 def main():
-	global CONFIG, PROGRAM_END, BASE_DIR
+	global CONFIG, PROGRAM_END
 	cap = cv2.VideoCapture(CONFIG.device)
 	time.sleep(1)
 	detector = dlib.get_frontal_face_detector()
-	predictor = dlib.shape_predictor(os.path.join(BASE_DIR, './learning_focus.dat'))
+	predictor = dlib.shape_predictor(face_recognition_models.pose_predictor_model_location())
 	trackers = []
 	known = []
 	while PROGRAM_END == False:
