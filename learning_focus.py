@@ -1,3 +1,9 @@
+'''
+Learning Focus Main Source File 1.0.0
+This source code file is under MIT License.
+Copyright (c) 2022 Class Tools Develop Team
+Contributors: ren-yc svvkii
+'''
 # Libraries
 import os
 import sys
@@ -129,6 +135,8 @@ def main():
 			for issame in compareresult:
 				if issame == True:
 					id = compareresult.index(True)
+			if 'id' not in locals():
+				continue
 			landmarks = predictor(image = gray, box = faces[i])
 			if 1.5 * (landmarks.part(37).y - landmarks.part(19).y) < (landmarks.part(8).y - landmarks.part(57).y):
 				try:
@@ -205,9 +213,9 @@ def main():
 				break
 	cap.release()
 	cv2.destroyAllWindows()
-	for i in range(len(known)):
-		if known[i].totgreen / (known[i].totgreen + known[i].totred) <= CONFIG.correction:
-			known.remove(known[i])
+	for i in known:
+		if i.totgreen / (i.totgreen + i.totred) <= CONFIG.correction:
+			known.remove(i)
 	for i in range(len(known)):
 		print('Total good studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[i].totgreen / 60, 2)))
 		print('Total bad studying time for Face ' + str(i) + ' (Minute): ' + str(round(known[i].totred / 60, 2)))
