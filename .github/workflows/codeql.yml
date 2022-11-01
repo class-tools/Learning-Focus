@@ -19,12 +19,12 @@ jobs:
       matrix:
         language: [ 'python' ]
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v3
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
           languages: ${{ matrix.language }}
           config-file: ./.github/codeql/codeql-config.yml
-      - name: Perform CodeQL Analysis
+      - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2
