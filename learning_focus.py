@@ -13,6 +13,7 @@ import time
 import numpy
 import tkinter
 import argparse
+import threading
 import face_recognition
 import face_recognition_models
 
@@ -20,6 +21,7 @@ import face_recognition_models
 CONFIG = None
 PROGRAM_END = False
 BASE_DIR = (os.path.dirname(sys.executable) if hasattr(sys, 'frozen') else os.path.dirname(__file__))
+frame = None
 
 # Classes
 class face:
@@ -41,7 +43,6 @@ def parse_command_line_arguments():
 	parser.add_argument('--correction', type = float, default = 0.05, help = 'Correction threshold (Between 0 and 1) of error face measurement. (Default: 0.05)')
 	parser.add_argument('--device', type = int, default = 0, help = 'Device ID of the camera using. (Default: 0)')
 	parser.add_argument('--debug', action = 'store_true', help = 'Enable debug mode. (Default: Disable)')
-	parser.add_argument('--delay', type = int, default = -1, help = 'Delay time (Millisecond) after predicting. (Default: -1)')
 	parser.add_argument('--noconsole', action = 'store_true', help = 'Hide the console window. (Default: Disable)')
 	parser.add_argument('--tolerance', type = float, default = 0.5, help = 'Tolerance (Between 0 and 1) for face comparing. (Default: 0.5)')
 	CONFIG = parser.parse_args()
@@ -83,16 +84,27 @@ def show_plot_image_data(input: list):
 	plot.legend(loc = 'upper left')
 	plot.show()
 
+def show_capture_image_thread():
+	global PROGRAM_END, frame
+	time.sleep(1)
+	while True:
+		cv2.imshow('Face', cv2.flip(frame, 1))
+		if 0xFF & cv2.waitKey(1) == 27:
+			PROGRAM_END = True
+			break
+
 def main():
-	global CONFIG, PROGRAM_END
+	global CONFIG, PROGRAM_END, frame
 	cap = cv2.VideoCapture(CONFIG.device)
 	time.sleep(1)
 	detector = dlib.get_frontal_face_detector()
 	predictor = dlib.shape_predictor(face_recognition_models.pose_predictor_model_location())
 	trackers = []
 	known = []
+	subthread = threading.Thread(target = show_capture_image_thread)
+	subthread.setDaemon(True)
+	subthread.start()
 	while PROGRAM_END == False:
-		timestampstart = time.time()
 		frame = cap.read()[1]
 		gray = cv2.cvtColor(src = frame, code = cv2.COLOR_BGR2GRAY)
 		faces = detector(gray)
@@ -204,13 +216,6 @@ def main():
 				print('Face ' + str(i) + ':')
 				known[i].debug()
 			print('---')
-		cv2.imshow('Face', cv2.flip(frame, 1))
-		while True:
-			if 0xFF & cv2.waitKey(100) == 27:
-				PROGRAM_END = True
-				break
-			if (time.time() - timestampstart) * 1000 >= CONFIG.delay:
-				break
 	cap.release()
 	cv2.destroyAllWindows()
 	for i in known:
