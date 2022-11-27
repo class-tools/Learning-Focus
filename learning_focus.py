@@ -6,8 +6,8 @@ Contributors: ren-yc svvkii
 '''
 # Libraries
 import os
-import sys
 import cv2
+import sys
 import dlib
 import time
 import numpy
@@ -21,7 +21,8 @@ import face_recognition_models
 CONFIG = None
 PROGRAM_END = False
 BASE_DIR = (os.path.dirname(sys.executable) if hasattr(sys, 'frozen') else os.path.dirname(__file__))
-frame = None
+rawframe = None
+processedframe = None
 
 # Classes
 class face:
@@ -41,8 +42,10 @@ def parse_command_line_arguments():
 	global CONFIG
 	parser = argparse.ArgumentParser(description = 'Learning Focus command line arguments.')
 	parser.add_argument('--correction', type = float, default = 0.05, help = 'Correction threshold (Between 0 and 1) of error face measurement. (Default: 0.05)')
-	parser.add_argument('--device', type = int, default = 0, help = 'Device ID of the camera using. (Default: 0)')
 	parser.add_argument('--debug', action = 'store_true', help = 'Enable debug mode. (Default: Disable)')
+	parser.add_argument('--delayface', type = float, default = 0.5, help = 'Delay of face detecting and recognizing loop. (Default: 0.5)')
+	parser.add_argument('--delayshow', type = float, default = 0.5, help = 'Delay of frame showing loop. (Default: 0.5)')
+	parser.add_argument('--device', type = int, default = 0, help = 'Device ID of the camera using. (Default: 0)')
 	parser.add_argument('--noconsole', action = 'store_true', help = 'Hide the console window. (Default: Disable)')
 	parser.add_argument('--tolerance', type = float, default = 0.5, help = 'Tolerance (Between 0 and 1) for face comparing. (Default: 0.5)')
 	CONFIG = parser.parse_args()
@@ -84,17 +87,29 @@ def show_plot_image_data(input: list):
 	plot.legend(loc = 'upper left')
 	plot.show()
 
+def cover_numpy_frame_array(first: numpy.ndarray, second: numpy.ndarray):
+	for i in range(first.shape[0]):
+		k = second[i, :]
+		for j in range(first.shape[1]):
+			g, b, r = k[j]
+			if g != 255 or b != 255 or r != 255:
+				first[i, j] = k[j]
+	return first
+
 def show_capture_image_thread():
-	global PROGRAM_END, frame
-	time.sleep(1)
+	global PROGRAM_END, rawframe, processedframe
+	time.sleep(2)
 	while True:
-		cv2.imshow('Face', cv2.flip(frame, 1))
+		timestampbegin = time.time()
+		cv2.imshow('Face', cv2.flip(cover_numpy_frame_array(rawframe, processedframe), 1))
 		if 0xFF & cv2.waitKey(1) == 27:
 			PROGRAM_END = True
 			break
+		while time.time() - timestampbegin < CONFIG.delayshow:
+			time.sleep(0.1)
 
 def main():
-	global CONFIG, PROGRAM_END, frame
+	global CONFIG, PROGRAM_END, rawframe, processedframe
 	cap = cv2.VideoCapture(CONFIG.device)
 	time.sleep(1)
 	detector = dlib.get_frontal_face_detector()
@@ -105,8 +120,10 @@ def main():
 	subthread.setDaemon(True)
 	subthread.start()
 	while PROGRAM_END == False:
-		frame = cap.read()[1]
-		gray = cv2.cvtColor(src = frame, code = cv2.COLOR_BGR2GRAY)
+		timestampbegin = time.time()
+		rawframe = cap.read()[1]
+		processedframetmp = numpy.ones_like(rawframe) * 255
+		gray = cv2.cvtColor(rawframe, cv2.COLOR_BGR2GRAY)
 		faces = detector(gray)
 		if len(faces) > len(trackers):
 			for _ in range(len(faces) - len(trackers)):
@@ -114,11 +131,11 @@ def main():
 		for i in range(len(known)):
 			known[i].appeared = False
 		for i in range(len(faces)):
-			trackers[i].start_track(frame, faces[i])
-			trackers[i].update(frame)
+			trackers[i].start_track(rawframe, faces[i])
+			trackers[i].update(rawframe)
 			pos = trackers[i].get_position()
 			try:
-				currentface = face_recognition.face_encodings(frame[int(pos.top() - 20): int(pos.top() - 20) + int(pos.bottom() + 20), int(pos.left() - 20): int(pos.left() - 20) + int(pos.right() + 20)])[0]
+				currentface = face_recognition.face_encodings(rawframe[int(pos.top() - 20): int(pos.top() - 20) + int(pos.bottom() + 20), int(pos.left() - 20): int(pos.left() - 20) + int(pos.right() + 20)])[0]
 			except IndexError:
 				continue
 			if len(known) == 0:
@@ -135,12 +152,12 @@ def main():
 				if issame == True:
 					id = compareresult.index(True)
 					known[id].appeared = True
-			cv2.rectangle(frame, (int(pos.left() - 20), int(pos.top() - 20)), (int(pos.right() + 20), int(pos.bottom() + 20)), ((0, 0, 255) if known[id].status == 'red' else (0, 255, 0)), 2)
-			frame = cv2.flip(cv2.putText(cv2.flip(frame, 1), 'Face ' + str(id), (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) - pos.left() - (pos.right() - pos.left() - len(str(id)) - 5) / 2), int(pos.top() - 25)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, ((0, 0, 255) if known[id].status == 'red' else (0, 255, 0)), 2), 1)
+			cv2.rectangle(processedframetmp, (int(pos.left() - 20), int(pos.top() - 20)), (int(pos.right() + 20), int(pos.bottom() + 20)), ((0, 0, 255) if known[id].status == 'red' else (0, 255, 0)), 2)
+			processedframetmp = cv2.flip(cv2.putText(cv2.flip(processedframetmp, 1), 'Face ' + str(id), (int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) - pos.left() - (pos.right() - pos.left() - len(str(id)) - 5) / 2), int(pos.top() - 25)), cv2.FONT_HERSHEY_SIMPLEX, 0.5, ((0, 0, 255) if known[id].status == 'red' else (0, 255, 0)), 2), 1)
 		for i in range(len(faces)):
 			pos = trackers[i].get_position()
 			try:
-				currentface = face_recognition.face_encodings(frame[int(pos.top() - 20): int(pos.top() - 20) + int(pos.bottom() + 20), int(pos.left() - 20): int(pos.left() - 20) + int(pos.right() + 20)])[0]
+				currentface = face_recognition.face_encodings(rawframe[int(pos.top() - 20): int(pos.top() - 20) + int(pos.bottom() + 20), int(pos.left() - 20): int(pos.left() - 20) + int(pos.right() + 20)])[0]
 			except IndexError:
 				continue
 			compareresult = face_recognition.compare_faces(get_class_face_array(known), currentface, CONFIG.tolerance)
@@ -152,7 +169,7 @@ def main():
 			landmarks = predictor(image = gray, box = faces[i])
 			if 1.5 * (landmarks.part(37).y - landmarks.part(19).y) < (landmarks.part(8).y - landmarks.part(57).y):
 				try:
-					b, g, r = frame[int(landmarks.part(40).x - 1), int(landmarks.part(40).y - 3)]
+					b, g, r = rawframe[int(landmarks.part(40).x - 1), int(landmarks.part(40).y - 3)]
 				except IndexError:
 					known[id].status = 'red'
 					known[id].timestampred = time.time()
@@ -163,7 +180,7 @@ def main():
 					break
 			if 2 * (landmarks.part(29).x - landmarks.part(1).x) < (landmarks.part(15).x - landmarks.part(29).x):
 				try:
-					b, g, r = frame[int(landmarks.part(42).x + 6), int(landmarks.part(42).y - 3)]
+					b, g, r = rawframe[int(landmarks.part(42).x + 6), int(landmarks.part(42).y - 3)]
 				except IndexError:
 					known[id].status = 'red'
 					known[id].timestampred = time.time()
@@ -174,7 +191,7 @@ def main():
 					break
 			if (landmarks.part(29).x - landmarks.part(1).x) > (2 * (landmarks.part(15).x - landmarks.part(29).x)):
 				try:
-					b, g, r = frame[int(landmarks.part(42).x + 4), int(landmarks.part(39).y - 3)]
+					b, g, r = rawframe[int(landmarks.part(42).x + 4), int(landmarks.part(39).y - 3)]
 				except IndexError:
 					known[id].status = 'red'
 					known[id].timestampred = time.time()
@@ -196,7 +213,7 @@ def main():
 				for n in range(68):
 					x = landmarks.part(n).x
 					y = landmarks.part(n).y
-					cv2.circle(img = frame, center = (x, y), radius = 2, color = (255, 255, 255), thickness = -1)
+					cv2.circle(img = processedframetmp, center = (x, y), radius = 2, color = (255, 255, 255), thickness = -1)
 			if 'id' in locals():
 				if known[id].status == 'green':
 					known[id].totgreen += time.time() - known[id].timestampround
@@ -216,6 +233,9 @@ def main():
 				print('Face ' + str(i) + ':')
 				known[i].debug()
 			print('---')
+		while time.time() - timestampbegin < CONFIG.delayface:
+			time.sleep(0.1)
+		processedframe = processedframetmp
 	cap.release()
 	cv2.destroyAllWindows()
 	for i in known:
