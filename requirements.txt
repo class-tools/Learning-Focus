@@ -1,6 +1,7 @@
 dlib
 numpy
 matplotlib
+pyinstaller
 opencv-python
 face_recognition
 face_recognition_models

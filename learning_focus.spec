@@ -1,9 +1,11 @@
+import sys
+
 ana = Analysis(
 	['learning_focus.py'],
 	pathex = [],
 	binaries = [
 		(
-			'D:\\Miniconda3\\Lib\site-packages\\face_recognition_models\\models\\*.*',
+			sys.path[5] + '\\face_recognition_models\\models\\*.*',
 			'.\\face_recognition_models\\models'
 		)
 	],
@@ -32,7 +34,7 @@ exe = EXE(
 	debug = False,
 	bootloader_ignore_signals = False,
 	strip = False,
-	upx = True,
+	upx = False,
 	upx_exclude = [],
 	runtime_tmpdir = None,
 	console = True,

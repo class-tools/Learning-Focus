@@ -9,25 +9,8 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build-x86:
-    name: Build x86
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.8.10'
-          architecture: x86
-      - name: Initialize pip
-        run: |
-          pip install -r requirements.txt
-      - name: Build EXE
-        run: |
-          .\scripts\build.ps1
-  build-x64:
-    name: Build x64
+  build:
+    name: Build
     runs-on: windows-latest
     steps:
       - name: Checkout repository
