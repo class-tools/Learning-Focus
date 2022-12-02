@@ -23,6 +23,7 @@ PROGRAM_END = False
 BASE_DIR = (os.path.dirname(sys.executable) if hasattr(sys, 'frozen') else os.path.dirname(__file__))
 rawframe = None
 processedframe = None
+coveredframe = None
 
 # Classes
 class face:
@@ -87,7 +88,7 @@ def show_plot_image_data(input: list):
 	plot.legend(loc = 'upper left')
 	plot.show()
 
-def cover_numpy_frame_array(first: numpy.ndarray, second: numpy.ndarray):
+def cover_numpy_frame_func(first: numpy.ndarray, second: numpy.ndarray):
 	for i in range(first.shape[0]):
 		k = second[i, :]
 		for j in range(first.shape[1]):
@@ -96,17 +97,26 @@ def cover_numpy_frame_array(first: numpy.ndarray, second: numpy.ndarray):
 				first[i, j] = k[j]
 	return first
 
-def show_capture_image_thread():
-	global PROGRAM_END, rawframe, processedframe
-	time.sleep(2)
-	while True:
+def cover_numpy_frame_thread():
+	global PROGRAM_END, rawframe, processedframe, coveredframe
+	while PROGRAM_END == False:
 		timestampbegin = time.time()
-		cv2.imshow('Face', cv2.flip(cover_numpy_frame_array(rawframe, processedframe), 1))
+		coveredframe = cover_numpy_frame_func(rawframe, processedframe)
+		while time.time() - timestampbegin < CONFIG.delayshow:
+			time.sleep(0.1)
+
+def show_capture_image_thread():
+	global PROGRAM_END, rawframe, processedframe, coveredframe
+	time.sleep(5)
+	subthread = threading.Thread(target = cover_numpy_frame_thread)
+	subthread.setDaemon(True)
+	subthread.start()
+	time.sleep(5)
+	while True:
+		cv2.imshow('Face', cv2.flip(coveredframe, 1))
 		if 0xFF & cv2.waitKey(1) == 27:
 			PROGRAM_END = True
 			break
-		while time.time() - timestampbegin < CONFIG.delayshow:
-			time.sleep(0.1)
 
 def main():
 	global CONFIG, PROGRAM_END, rawframe, processedframe

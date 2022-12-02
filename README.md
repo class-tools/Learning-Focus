@@ -5,6 +5,7 @@
 <h1 align="center">- Learning Focus -</h1>
 
 <p align="center">
+<img src="https://github.com/class-tools/Learning-Focus/actions/workflows/build.yml/badge.svg">
 <img src="https://github.com/class-tools/Learning-Focus/actions/workflows/gitmsg.yml/badge.svg">
 <img src="https://github.com/class-tools/Learning-Focus/actions/workflows/codeql.yml/badge.svg">
 <img src="https://img.shields.io/github/v/release/class-tools/Learning-Focus.svg?logo=iCloud">
