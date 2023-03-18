@@ -2,34 +2,38 @@
 
 name: "Build"
 
-on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+on: [push, pull_request]
 
 jobs:
-  build:
-    name: Build
+  build-x86:
+    name: Build x86
     runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Initialize vcpkg
+        uses: johnwason/vcpkg-action@v4
         with:
-          python-version: '3.8.10'
-          architecture: x64
-      - name: Setup cache
-        uses: actions/cache@v3
+          pkgs: jsoncpp spdlog
+          triplet: x86-windows-static
+          token: ${{ github.token }}
+      - name: Build solution
+        run: |
+          .\vcpkg\vcpkg integrate install
+          .\scripts\build.ps1 Release x86
+  build-x64:
+    name: Build x64
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Initialize vcpkg
+        uses: johnwason/vcpkg-action@v4
         with:
-          path: ~\AppData\Local\pip\Cache
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-      - name: Initialize pip
+          pkgs: jsoncpp spdlog
+          triplet: x64-windows-static
+          token: ${{ github.token }}
+      - name: Build solution
         run: |
-          pip install -r requirements.txt
-      - name: Build EXE
-        run: |
-          .\scripts\build.ps1
+          .\vcpkg\vcpkg integrate install
+          .\scripts\build.ps1 Release x64
