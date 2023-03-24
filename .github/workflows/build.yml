@@ -30,10 +30,10 @@ jobs:
         uses: johnwason/vcpkg-action@v4
         with:
           pkgs: ${{ env.pkgs }}
-          triplet: ${{ format('{0}-{1}', ${{ matrix.arch }}, ${{ matrix.triplet }}) }}
+          triplet: ${{ format('{0}-{1}', matrix.arch, matrix.triplet) }}
           token: ${{ github.token }}
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: ${{ format('{0}-{1}-release', ${{ matrix.arch }}, ${{ matrix.cfg }}) }}
+          configurePreset: ${{ format('{0}-{1}-release', matrix.arch, matrix.cfg) }}
           configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
