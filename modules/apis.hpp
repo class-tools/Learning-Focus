@@ -11,11 +11,11 @@ timestamp GetTimestamp() {
 	tm ptminfo = {};
 	timestamp NowTime = {};
 	time(&rawtime);
-	#ifdef _WIN32
+#ifdef _WIN32
 	localtime_s(&ptminfo, &rawtime);
-	#elif linux
+#elif linux
 	localtime_r(&rawtime, &ptminfo);
-	#endif
+#endif
 	NowTime.Year = ptminfo.tm_year + 1900;
 	NowTime.Month = ptminfo.tm_mon + 1;
 	NowTime.Day = ptminfo.tm_mday;
