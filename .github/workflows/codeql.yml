@@ -7,13 +7,16 @@ on: [push, pull_request]
 jobs:
   analyze:
     name: Analyze
+    env:
+      VCPKG_ROOT: ./vcpkg
     runs-on: windows-latest
     permissions:
       security-events: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Use MSVC CLI
+        uses: ilammy/msvc-dev-cmd@v1
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg
@@ -32,5 +35,7 @@ jobs:
         with:
           configurePreset: x64-windows-release
           configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
+          buildPreset: default
+          buildPresetAdditionalArgs: "['--config Release']"
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2

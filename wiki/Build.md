@@ -18,6 +18,8 @@ vcpkg install fmt:${arch}-${os} jsoncpp:${arch}-${os} spdlog:${arch}-${os}
 
 其中 `${arch}` 为构建的程序架构，可为 `x86` / `x64`；`${os}` 为构建的平台名称，可为 `windows-static` / `linux`。
 
+设置环境变量 `VCPKG_ROOT` 指定 vcpkg 路径，便于编译。
+
 **请注意：若要 WSL 远程构建，请在 WSL 中新建 vcpkg 环境，避免与 Windows 本机本地环境冲突。**
 
 ### 配置

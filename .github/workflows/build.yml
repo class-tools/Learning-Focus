@@ -21,14 +21,21 @@ jobs:
             triplet: windows-static
     env:
       pkgs: fmt jsoncpp spdlog
+      VCPKG_ROOT: ./vcpkg
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - uses: ilammy/msvc-dev-cmd@v1
+      - name: Use MSVC CLI
+        uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.os == 'windows-latest' }}
         with:
           arch: ${{ matrix.arch }}
+      - name: Install cross-platform packages
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.arch == 'x86' }}
+        run: |
+          sudo apt update -y
+          sudo apt install -y gcc-multilib g++-multilib
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg
@@ -42,3 +49,5 @@ jobs:
         with:
           configurePreset: ${{ format('{0}-{1}-release', matrix.arch, matrix.cfg) }}
           configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
+          buildPreset: default
+          buildPresetAdditionalArgs: "['--config Release']"
