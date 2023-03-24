@@ -28,6 +28,6 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: x64-windows-release
-          configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE="./vcpkg/scripts/buildsystems/vcpkg.cmake"']"
+          configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2

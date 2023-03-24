@@ -36,4 +36,4 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: ${{ format('{0}-{1}-release', ${{ matrix.arch }}, ${{ matrix.cfg }}) }}
-          configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE="./vcpkg/scripts/buildsystems/vcpkg.cmake"']"
+          configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
