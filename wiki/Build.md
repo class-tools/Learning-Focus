@@ -6,8 +6,6 @@
 
 * Visual Studio 2022
 
-* PowerShell
-
 * vcpkg
 
 ### 依赖
@@ -15,17 +13,16 @@
 vcpkg 依赖库安装流程如下：
 
 ```
-vcpkg install jsoncpp:${arch}-windows-static openssl:${arch}-windows-static spdlog:${arch}-windows-static
-vcpkg integrate install
+vcpkg install fmt:${arch}-${os} jsoncpp:${arch}-${os} spdlog:${arch}-${os}
 ```
 
-其中 `${arch}` 为构建的程序架构，可为 `x64` / `x86`。
+其中 `${arch}` 为构建的程序架构，可为 `x86` / `x64`；`${os}` 为构建的平台名称，可为 `windows-static` / `linux`。
+
+**请注意：若要 WSL 远程构建，请在 WSL 中新建 vcpkg 环境，避免与 Windows 本机本地环境冲突。**
 
 ### 配置
 
-打开项目根目录下的 `WCH.sln` 文件进入 Visual Studio 后，选择工具顶栏的 `Release` / `Debug` 和 `x64` / `x86` 选项，再点击右侧的 `开始执行 (不调试)` 开始构建。
-
-也可使用 [`scripts/build.ps1`](https://github.com/class-tools/Learning-Focus/blob/master/scripts/build.ps1) 自动化构建，具体方法见 [脚本](./Scripts)。
+在项目文件夹下打开 Visual Studio 后，可选择 WSL 远程或本机本地构建。
 
 ### 运行
 
@@ -34,14 +31,5 @@ vcpkg integrate install
 ### 调试
 
 在相应位置标记断点后选择 Visual Studio 工具顶栏的调试器即可。
-
-
-### 问题
-
-若在构建过程中出现 PowerShell 脚本返回值不为零的情况，请尝试以管理员身份运行 PowerShell 并执行下列命令：
-
-```
-Set-ExecutionPolicy RemoteSigned
-```
 
 _**若有任何问题欢迎与项目维护人员联系！**_

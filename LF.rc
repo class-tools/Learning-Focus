@@ -3,10 +3,4 @@ Learning Focus Resource File 2.0.0
 This source code file isn't under any license.
 Generator: Visual Studio 2022
 */
-#define APSTUDIO_READONLY_SYMBOLS
-#include "winres.h"
-#undef APSTUDIO_READONLY_SYMBOLS
-#if !defined(AFX_RESOURCE_DLL)
-#pragma code_page(65001)
-IDI_ICON ICON "LF.ico"
-#endif
+IDI_ICON1 ICON DISCARDABLE "LF.ico"

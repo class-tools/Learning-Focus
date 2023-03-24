@@ -11,7 +11,7 @@ Contributors: ren-yc
 #include "./modules/functions.hpp"
 #include "./modules/init.hpp"
 
-int32_t wmain(int32_t _argc, wchar_t* _argv[]) {
+int32_t main([[maybe_unused]] int32_t _argc, [[maybe_unused]] char* _argv[]) {
 	LF_Init();
 	return 0;
 }

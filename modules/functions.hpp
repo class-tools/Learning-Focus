@@ -7,6 +7,6 @@ Contributors: ren-yc
 
 void LF_exit() {
 	// Exit program.
-	SPDLOG_INFO(std::format(L"Exiting \"Learning Focus {}\"", LF_version));
+	SPDLOG_INFO(fmt::format("Exiting \"Learning Focus {}\"", LF_version));
 	_exit(0);
 }

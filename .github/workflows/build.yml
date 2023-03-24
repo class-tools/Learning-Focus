@@ -5,35 +5,35 @@ name: "Build"
 on: [push, pull_request]
 
 jobs:
-  build-x86:
-    name: Build x86
-    runs-on: windows-latest
+  build:
+    name: Build
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        arch: [x86, x64]
+        include:
+          - os: ubuntu-latest
+            cfg: linux
+            triplet: linux
+          - os: windows-latest
+            cfg: windows
+            triplet: windows-static
+    env:
+      pkgs: fmt jsoncpp spdlog
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+      - name: Install CMake and Ninja
+        uses: lukka/get-cmake@latest
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
-          pkgs: jsoncpp spdlog
-          triplet: x86-windows-static
+          pkgs: ${{ env.pkgs }}
+          triplet: ${{ format('{0}-{1}', ${{ matrix.arch }}, ${{ matrix.triplet }}) }}
           token: ${{ github.token }}
-      - name: Build solution
-        run: |
-          .\vcpkg\vcpkg integrate install
-          .\scripts\build.ps1 Release x86
-  build-x64:
-    name: Build x64
-    runs-on: windows-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-      - name: Initialize vcpkg
-        uses: johnwason/vcpkg-action@v4
+      - name: Run CMake
+        uses: lukka/run-cmake@v10
         with:
-          pkgs: jsoncpp spdlog
-          triplet: x64-windows-static
-          token: ${{ github.token }}
-      - name: Build solution
-        run: |
-          .\vcpkg\vcpkg integrate install
-          .\scripts\build.ps1 Release x64
+          configurePreset: ${{ format('{0}-{1}-release', ${{ matrix.arch }}, ${{ matrix.cfg }}) }}
+          configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE="./vcpkg/scripts/buildsystems/vcpkg.cmake"']"

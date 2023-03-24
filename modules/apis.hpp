@@ -7,11 +7,15 @@ Contributors: ren-yc
 
 timestamp GetTimestamp() {
 	// Get current time and return a timestamp object.
-	timestamp NowTime;
-	time_t rawtime;
-	struct tm ptminfo;
+	time_t rawtime = 0;
+	tm ptminfo = {};
+	timestamp NowTime = {};
 	time(&rawtime);
+	#ifdef _WIN32
 	localtime_s(&ptminfo, &rawtime);
+	#elif linux
+	localtime_r(&rawtime, &ptminfo);
+	#endif
 	NowTime.Year = ptminfo.tm_year + 1900;
 	NowTime.Month = ptminfo.tm_mon + 1;
 	NowTime.Day = ptminfo.tm_mday;
