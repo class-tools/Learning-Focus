@@ -35,7 +35,7 @@ jobs:
         with:
           configurePreset: x64-windows-release
           configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
-          buildPreset: default
+          buildPreset: x64-windows-release
           buildPresetAdditionalArgs: "['--config Release']"
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2

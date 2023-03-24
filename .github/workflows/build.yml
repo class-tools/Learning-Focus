@@ -35,6 +35,7 @@ jobs:
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.arch == 'x86' }}
         run: |
           sudo apt update -y
+          sudo apt upgrade -y
           sudo apt install -y gcc-multilib g++-multilib
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
@@ -49,5 +50,5 @@ jobs:
         with:
           configurePreset: ${{ format('{0}-{1}-release', matrix.arch, matrix.cfg) }}
           configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
-          buildPreset: default
+          buildPreset: ${{ format('{0}-{1}-release', matrix.arch, matrix.cfg) }}
           buildPresetAdditionalArgs: "['--config Release']"

@@ -31,6 +31,11 @@
 				"type": "equals",
 				"lhs": "${hostSystemName}",
 				"rhs": "Linux"
+			},
+			"vendor": {
+				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
+					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
+				}
 			}
 		},
 		{
@@ -96,11 +101,6 @@
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Debug",
 				"VCPKG_TARGET_TRIPLET": "x64-linux"
-			},
-			"vendor": {
-				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-				}
 			}
 		},
 		{
@@ -114,11 +114,6 @@
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Release",
 				"VCPKG_TARGET_TRIPLET": "x64-linux"
-			},
-			"vendor": {
-				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-				}
 			}
 		},
 		{
@@ -132,11 +127,6 @@
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Debug",
 				"VCPKG_TARGET_TRIPLET": "x86-linux"
-			},
-			"vendor": {
-				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-				}
 			}
 		},
 		{
@@ -150,12 +140,49 @@
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Release",
 				"VCPKG_TARGET_TRIPLET": "x86-linux"
-			},
-			"vendor": {
-				"microsoft.com/VisualStudioRemoteSettings/CMake/1.0": {
-					"sourceDir": "$env{HOME}/.vs/$ms{projectDirName}"
-				}
 			}
+		}
+	],
+	"buildPresets": [
+		{
+			"name": "x64-windows-debug",
+			"displayName": "Windows x64 Debug",
+			"configurePreset": "x64-windows-debug"
+		},
+		{
+			"name": "x64-windows-release",
+			"displayName": "Windows x64 Release",
+			"configurePreset": "x64-windows-release"
+		},
+		{
+			"name": "x86-windows-debug",
+			"displayName": "Windows x86 Debug",
+			"configurePreset": "x86-windows-debug"
+		},
+		{
+			"name": "x86-windows-release",
+			"displayName": "Windows x86 Release",
+			"configurePreset": "x86-windows-release"
+		},
+		{
+			"name": "x64-linux-debug",
+			"displayName": "Linux x64 Debug",
+			"configurePreset": "x64-linux-debug"
+		},
+		{
+			"name": "x64-linux-release",
+			"displayName": "Linux x64 Release",
+			"configurePreset": "x64-linux-release"
+		},
+		{
+			"name": "x86-linux-debug",
+			"displayName": "Linux x86 Debug",
+			"configurePreset": "x86-linux-debug"
+		},
+		{
+			"name": "x86-linux-release",
+			"displayName": "Linux x86 Release",
+			"configurePreset": "x86-linux-release"
 		}
 	]
 }
