@@ -34,7 +34,6 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: windows-release
-          configurePresetAdditionalArgs: ${{ format('"[\'-DCMAKE_TOOLCHAIN_FILE=\"{0}/scripts/buildsystems/vcpkg.cmake\"\']"', env.VCPKG_ROOT) }}
           buildPreset: windows-release
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2

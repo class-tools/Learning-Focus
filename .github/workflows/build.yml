@@ -41,5 +41,4 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           configurePreset: ${{ format('{0}-{1}', matrix.platform, matrix.config) }}
-          configurePresetAdditionalArgs: ${{ format('"[\'-DCMAKE_TOOLCHAIN_FILE=\"{0}/scripts/buildsystems/vcpkg.cmake\"\']"', env.VCPKG_ROOT) }}
           buildPreset: ${{ format('{0}-{1}', matrix.platform, matrix.config) }}
