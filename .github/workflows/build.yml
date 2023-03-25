@@ -6,49 +6,40 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: Build
+    name: ${{ format('Build {0}-{1}', matrix.platform, matrix.config) }}
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-        arch: [x86, x64]
+        config: [debug, release]
         include:
           - os: ubuntu-latest
-            cfg: linux
-            triplet: linux
+            platform: linux
+            triplet: x64-linux
           - os: windows-latest
-            cfg: windows
-            triplet: windows-static
+            platform: windows
+            triplet: x64-windows-static
     env:
       pkgs: fmt jsoncpp spdlog
-      VCPKG_ROOT: ./vcpkg
+      VCPKG_ROOT: ${{ format('{0}/vcpkg', github.workspace) }}
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
       - name: Use MSVC CLI
         uses: ilammy/msvc-dev-cmd@v1
-        if: ${{ matrix.os == 'windows-latest' }}
-        with:
-          arch: ${{ matrix.arch }}
-      - name: Install cross-platform packages
-        if: ${{ matrix.os == 'ubuntu-latest' && matrix.arch == 'x86' }}
-        run: |
-          sudo apt update -y
-          sudo apt upgrade -y
-          sudo apt install -y gcc-multilib g++-multilib
+        if: ${{ matrix.platform == 'windows' }}
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
           pkgs: ${{ env.pkgs }}
-          triplet: ${{ format('{0}-{1}', matrix.arch, matrix.triplet) }}
+          triplet: ${{ matrix.triplet }}
           token: ${{ github.token }}
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: ${{ format('{0}-{1}-release', matrix.arch, matrix.cfg) }}
-          configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
-          buildPreset: ${{ format('{0}-{1}-release', matrix.arch, matrix.cfg) }}
-          buildPresetAdditionalArgs: "['--config Release']"
+          configurePreset: ${{ format('{0}-{1}', matrix.platform, matrix.config) }}
+          configurePresetAdditionalArgs: ${{ format('"[\'-DCMAKE_TOOLCHAIN_FILE=\"{0}/scripts/buildsystems/vcpkg.cmake\"\']"', env.VCPKG_ROOT) }}
+          buildPreset: ${{ format('{0}-{1}', matrix.platform, matrix.config) }}

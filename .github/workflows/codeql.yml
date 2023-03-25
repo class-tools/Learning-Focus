@@ -8,7 +8,7 @@ jobs:
   analyze:
     name: Analyze
     env:
-      VCPKG_ROOT: ./vcpkg
+      VCPKG_ROOT: ${{ format('{0}/vcpkg', github.workspace) }}
     runs-on: windows-latest
     permissions:
       security-events: write
@@ -33,9 +33,8 @@ jobs:
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:
-          configurePreset: x64-windows-release
-          configurePresetAdditionalArgs: "['-DCMAKE_TOOLCHAIN_FILE=\"./vcpkg/scripts/buildsystems/vcpkg.cmake\"']"
-          buildPreset: x64-windows-release
-          buildPresetAdditionalArgs: "['--config Release']"
+          configurePreset: windows-release
+          configurePresetAdditionalArgs: ${{ format('"[\'-DCMAKE_TOOLCHAIN_FILE=\"{0}/scripts/buildsystems/vcpkg.cmake\"\']"', env.VCPKG_ROOT) }}
+          buildPreset: windows-release
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2

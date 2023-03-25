@@ -73,11 +73,10 @@ void LF_Init_Log() {
 	#endif
 	LF_version.append(fmt::format(" {}", LF_VER_BUILD));
 #endif
-	LF_version.append(fmt::format(" ({}", LF_Framework));
 #ifdef _WIN32
-	LF_version.append(" Windows)");
+	LF_version.append(" (Windows)");
 #elif linux
-	LF_version.append(" Linux)");
+	LF_version.append(" (Linux)");
 #endif
 	SPDLOG_INFO(fmt::format("Starting \"Learning Focus {}\"", LF_version));
 }

@@ -8,9 +8,9 @@
 			"binaryDir": "${sourceDir}/out/build/${presetName}",
 			"cacheVariables": {
 				"CMAKE_C_COMPILER": "cl.exe",
-				"CMAKE_CXX_COMPILER": "cl.exe",
-				"CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+				"CMAKE_CXX_COMPILER": "cl.exe"
 			},
+			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
 			"condition": {
 				"type": "equals",
 				"lhs": "${hostSystemName}",
@@ -24,9 +24,9 @@
 			"binaryDir": "${sourceDir}/out/build/${presetName}",
 			"cacheVariables": {
 				"CMAKE_C_COMPILER": "gcc",
-				"CMAKE_CXX_COMPILER": "g++",
-				"CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+				"CMAKE_CXX_COMPILER": "g++"
 			},
+			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
 			"condition": {
 				"type": "equals",
 				"lhs": "${hostSystemName}",
@@ -39,8 +39,8 @@
 			}
 		},
 		{
-			"name": "x64-windows-debug",
-			"displayName": "Windows x64 Debug",
+			"name": "windows-debug",
+			"displayName": "Windows Debug",
 			"inherits": "windows-base",
 			"architecture": {
 				"value": "x64",
@@ -52,8 +52,8 @@
 			}
 		},
 		{
-			"name": "x64-windows-release",
-			"displayName": "Windows x64 Release",
+			"name": "windows-release",
+			"displayName": "Windows Release",
 			"inherits": "windows-base",
 			"architecture": {
 				"value": "x64",
@@ -65,34 +65,8 @@
 			}
 		},
 		{
-			"name": "x86-windows-debug",
-			"displayName": "Windows x86 Debug",
-			"inherits": "windows-base",
-			"architecture": {
-				"value": "x86",
-				"strategy": "external"
-			},
-			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "Debug",
-				"VCPKG_TARGET_TRIPLET": "x86-windows-static"
-			}
-		},
-		{
-			"name": "x86-windows-release",
-			"displayName": "Windows x86 Release",
-			"inherits": "windows-base",
-			"architecture": {
-				"value": "x86",
-				"strategy": "external"
-			},
-			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "Release",
-				"VCPKG_TARGET_TRIPLET": "x86-windows-static"
-			}
-		},
-		{
-			"name": "x64-linux-debug",
-			"displayName": "Linux x64 Debug",
+			"name": "linux-debug",
+			"displayName": "Linux Debug",
 			"inherits": "linux-base",
 			"architecture": {
 				"value": "x64",
@@ -104,8 +78,8 @@
 			}
 		},
 		{
-			"name": "x64-linux-release",
-			"displayName": "Linux x64 Release",
+			"name": "linux-release",
+			"displayName": "Linux Release",
 			"inherits": "linux-base",
 			"architecture": {
 				"value": "x64",
@@ -114,75 +88,29 @@
 			"cacheVariables": {
 				"CMAKE_BUILD_TYPE": "Release",
 				"VCPKG_TARGET_TRIPLET": "x64-linux"
-			}
-		},
-		{
-			"name": "x86-linux-debug",
-			"displayName": "Linux x86 Debug",
-			"inherits": "linux-base",
-			"architecture": {
-				"value": "x86",
-				"strategy": "external"
-			},
-			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "Debug",
-				"VCPKG_TARGET_TRIPLET": "x86-linux"
-			}
-		},
-		{
-			"name": "x86-linux-release",
-			"displayName": "Linux x86 Release",
-			"inherits": "linux-base",
-			"architecture": {
-				"value": "x86",
-				"strategy": "external"
-			},
-			"cacheVariables": {
-				"CMAKE_BUILD_TYPE": "Release",
-				"VCPKG_TARGET_TRIPLET": "x86-linux"
 			}
 		}
 	],
 	"buildPresets": [
 		{
-			"name": "x64-windows-debug",
-			"displayName": "Windows x64 Debug",
-			"configurePreset": "x64-windows-debug"
+			"name": "windows-debug",
+			"displayName": "Windows Debug",
+			"configurePreset": "windows-debug"
 		},
 		{
-			"name": "x64-windows-release",
-			"displayName": "Windows x64 Release",
-			"configurePreset": "x64-windows-release"
+			"name": "windows-release",
+			"displayName": "Windows Release",
+			"configurePreset": "windows-release"
 		},
 		{
-			"name": "x86-windows-debug",
-			"displayName": "Windows x86 Debug",
-			"configurePreset": "x86-windows-debug"
+			"name": "linux-debug",
+			"displayName": "Linux Debug",
+			"configurePreset": "linux-debug"
 		},
 		{
-			"name": "x86-windows-release",
-			"displayName": "Windows x86 Release",
-			"configurePreset": "x86-windows-release"
-		},
-		{
-			"name": "x64-linux-debug",
-			"displayName": "Linux x64 Debug",
-			"configurePreset": "x64-linux-debug"
-		},
-		{
-			"name": "x64-linux-release",
-			"displayName": "Linux x64 Release",
-			"configurePreset": "x64-linux-release"
-		},
-		{
-			"name": "x86-linux-debug",
-			"displayName": "Linux x86 Debug",
-			"configurePreset": "x86-linux-debug"
-		},
-		{
-			"name": "x86-linux-release",
-			"displayName": "Linux x86 Release",
-			"configurePreset": "x86-linux-release"
+			"name": "linux-release",
+			"displayName": "Linux Release",
+			"configurePreset": "linux-release"
 		}
 	]
 }
