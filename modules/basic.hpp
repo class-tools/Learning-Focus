@@ -12,8 +12,17 @@ Contributors: ren-yc
 #include <iostream>
 
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
+#include <argparse/argparse.hpp>
+#include <dlib/image_processing.h>
+#include <dlib/image_processing/frontal_face_detector.h>
+#include <dlib/misc_api.h>
+#include <dlib/opencv.h>
 #include <fmt/format.h>
 #include <json/json.h>
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/videoio.hpp>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/basic_file_sink.h>
 
@@ -35,6 +44,7 @@ const std::string LF_path_data = fmt::format("{}/.class-tools/LF", getenv("HOME"
 std::string LF_version;
 std::ifstream fin;
 std::ofstream fout;
+argparse::ArgumentParser ARG_parser("Learning Focus", LF_VER_MAIN, argparse::default_arguments::all);
 Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
 std::unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());

@@ -6,7 +6,7 @@ on: [push, pull_request]
 
 jobs:
   build:
-    name: ${{ format('Build {0}-{1}', matrix.platform, matrix.config) }}
+    name: ${{ format('{0}-{1}', matrix.platform, matrix.config) }}
     strategy:
       fail-fast: false
       matrix:
@@ -20,7 +20,7 @@ jobs:
             platform: windows
             triplet: x64-windows-static
     env:
-      pkgs: fmt jsoncpp spdlog
+      pkgs: argparse dlib fmt jsoncpp opencv spdlog
       VCPKG_ROOT: ${{ format('{0}/vcpkg', github.workspace) }}
     runs-on: ${{ matrix.os }}
     steps:
@@ -29,6 +29,10 @@ jobs:
       - name: Use MSVC CLI
         uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.platform == 'windows' }}
+      - name: Install APT dependencies
+        if: ${{ matrix.platform == 'linux' }}
+        run: |
+          sudo apt install autoconf bison gfortran gperf libdbus-1-dev libtool libgles2-mesa-dev libx11-dev libx11-xcb-dev libxcursor-dev libxdamage-dev libxext-dev libxft-dev libxi-dev libxinerama-dev libxkbcommon-x11-dev libxrandr-dev libxtst-dev
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg

@@ -24,3 +24,24 @@ timestamp GetTimestamp() {
 	NowTime.Second = ptminfo.tm_sec;
 	return NowTime;
 }
+
+std::string GetExecDir() {
+	// Get program executable directory.
+#ifdef _WIN32
+	std::string _res = _pgmptr;
+	char _spilt = '\\';
+#elif linux
+	char _path[4096] = {};
+	readlink("/proc/self/exe", _path, 4096);
+	std::string _res = _path;
+	char _spilt = '/';
+#endif
+	int32_t _pos = 0;
+	for (int32_t i = static_cast<int32_t>(_res.size() - 1); i >= 0; i--) {
+		if (_res[i] == _spilt) {
+			_pos = i;
+			break;
+		}
+	}
+	return _res.substr(0, _pos);
+}

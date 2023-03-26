@@ -1,5 +1,7 @@
 **此页面适合开发人员 / 贡献者阅读。**
 
+_**请注意，由于 `dlib` 的依赖库 `lapack` 在 vcpkg 中存在兼容性问题，故本项目暂时不能在 Linux 平台下编译，仅支持 Windows 平台。**_
+
 ### 环境
 
 * Windows 10 / 11
@@ -13,10 +15,10 @@
 vcpkg 依赖库安装流程如下：
 
 ```
-vcpkg install fmt:${arch}-${os} jsoncpp:${arch}-${os} spdlog:${arch}-${os}
+vcpkg install fmt:x64-${os} jsoncpp:x64-${os} spdlog:x64-${os}
 ```
 
-其中 `${arch}` 为构建的程序架构，可为 `x86` / `x64`；`${os}` 为构建的平台名称，可为 `windows-static` / `linux`。
+其中 `${os}` 为构建的平台名称，可为 `windows-static` / `linux`。
 
 设置环境变量 `VCPKG_ROOT` 指定 vcpkg 路径，便于编译。
 
@@ -29,6 +31,8 @@ vcpkg install fmt:${arch}-${os} jsoncpp:${arch}-${os} spdlog:${arch}-${os}
 ### 运行
 
 构建完毕会自动运行可执行文件，之后还可直接双击运行构建目录中的可执行文件（**程序运行不受运行目录影响，但程序所在目录下必须有所需的依赖文件**）。
+
+运行前务必下载 [DLib 人脸关键点检测模型](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2)，解压后放入程序所在目录。
 
 ### 调试
 

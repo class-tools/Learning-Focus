@@ -17,6 +17,8 @@ void LF_Init_Dir() {
 
 void LF_Init_Bind() {
 	// Initialize bindings.
+	ARG_parser.add_argument("-c", "--camera").default_value<int32_t>(0).nargs(1).help("specify the camera id of the video capturing device to use").scan<'i', int32_t>();
+	ARG_parser.add_argument("-d", "--debug").default_value<bool>(false).implicit_value(true).nargs(0).help("enable debug mode to view more output");
 	JSON_SWB.settings_ = []() {
 		Json::Value def;
 		Json::StreamWriterBuilder::setDefaults(&def);

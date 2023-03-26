@@ -10,3 +10,9 @@ void LF_exit() {
 	SPDLOG_INFO(fmt::format("Exiting \"Learning Focus {}\"", LF_version));
 	_exit(0);
 }
+
+void LF_Log_Args() {
+	// Print command line arguments into log file.
+	SPDLOG_INFO(fmt::format("Camera id: {}", ARG_parser.get<int32_t>("-c")));
+	SPDLOG_INFO(fmt::format("Debug mode: {}", ARG_parser.get<bool>("-d") ? "Enabled" : "Disabled"));
+}
