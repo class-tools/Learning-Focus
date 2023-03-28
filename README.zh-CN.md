@@ -16,7 +16,6 @@
 <img src="https://img.shields.io/github/v/release/class-tools/Learning-Focus.svg?logo=iCloud">
 <img src="https://img.shields.io/github/downloads/class-tools/Learning-Focus/total?label=GitHub%20Downloads">
 <img src="https://img.shields.io/badge/support-Windows%20x64-blue?logo=Windows">
-<img src="https://img.shields.io/badge/support-Linux%20x64-blue?logo=Linux">
 </p>
 
 一个能够让你专注于学习的 AI 程序。

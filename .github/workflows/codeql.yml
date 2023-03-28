@@ -15,8 +15,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Use MSVC CLI
+      - name: Setup environment (Windows)
         uses: ilammy/msvc-dev-cmd@v1
+      - name: Download model
+        run: |
+          curl -O https://github.com/fenollp/data.shape_predictor_68_face_landmarks/raw/main/shape_predictor_68_face_landmarks.dat
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg

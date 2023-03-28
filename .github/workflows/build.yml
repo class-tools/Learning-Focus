@@ -26,13 +26,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      - name: Use MSVC CLI
+      - name: Setup environment (Windows)
         uses: ilammy/msvc-dev-cmd@v1
         if: ${{ matrix.platform == 'windows' }}
-      - name: Install APT dependencies
+      - name: Setup environment (Linux)
         if: ${{ matrix.platform == 'linux' }}
         run: |
-          sudo apt install autoconf bison gfortran gperf libdbus-1-dev libtool libgles2-mesa-dev libx11-dev libx11-xcb-dev libxcursor-dev libxdamage-dev libxext-dev libxft-dev libxi-dev libxinerama-dev libxkbcommon-x11-dev libxrandr-dev libxtst-dev
+          sudo apt update
+          sudo apt upgrade -y
+          sudo apt install -y autoconf bison curl gfortran gperf libdbus-1-dev libtool libgles2-mesa-dev libx11-dev libx11-xcb-dev libxcursor-dev libxdamage-dev libxext-dev libxft-dev libxi-dev libxinerama-dev libxkbcommon-x11-dev libxrandr-dev libxtst-dev
+      - name: Download model
+        run: |
+          curl -O https://github.com/fenollp/data.shape_predictor_68_face_landmarks/raw/main/shape_predictor_68_face_landmarks.dat
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg

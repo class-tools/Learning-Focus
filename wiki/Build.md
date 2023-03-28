@@ -32,7 +32,7 @@ vcpkg install fmt:x64-${os} jsoncpp:x64-${os} spdlog:x64-${os}
 
 构建完毕会自动运行可执行文件，之后还可直接双击运行构建目录中的可执行文件（**程序运行不受运行目录影响，但程序所在目录下必须有所需的依赖文件**）。
 
-运行前务必下载 [DLib 人脸关键点检测模型](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2)，解压后放入程序所在目录。
+运行前务必下载 DLib 人脸关键点检测模型 [(官网)](http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2) [(GitHub)](https://github.com/fenollp/data.shape_predictor_68_face_landmarks/raw/main/shape_predictor_68_face_landmarks.dat)，（解压后）放入程序所在目录。
 
 ### 调试
 
