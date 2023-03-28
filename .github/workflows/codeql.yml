@@ -19,7 +19,7 @@ jobs:
         uses: ilammy/msvc-dev-cmd@v1
       - name: Download model
         run: |
-          curl -O https://github.com/fenollp/data.shape_predictor_68_face_landmarks/raw/main/shape_predictor_68_face_landmarks.dat
+          curl -O https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg

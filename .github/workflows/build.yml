@@ -37,7 +37,7 @@ jobs:
           sudo apt install -y autoconf bison curl gfortran gperf libdbus-1-dev libtool libgles2-mesa-dev libx11-dev libx11-xcb-dev libxcursor-dev libxdamage-dev libxext-dev libxft-dev libxi-dev libxinerama-dev libxkbcommon-x11-dev libxrandr-dev libxtst-dev
       - name: Download model
         run: |
-          curl -O https://github.com/fenollp/data.shape_predictor_68_face_landmarks/raw/main/shape_predictor_68_face_landmarks.dat
+          curl -O https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
       - name: Install CMake and Ninja
         uses: lukka/get-cmake@latest
       - name: Initialize vcpkg
