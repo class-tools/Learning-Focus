@@ -20,6 +20,8 @@ jobs:
       - name: Download model
         run: |
           curl -O https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
+      - name: Setup debug session
+        uses: csexton/debugger-action@master
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
