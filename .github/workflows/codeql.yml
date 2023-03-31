@@ -20,14 +20,15 @@ jobs:
       - name: Download model
         run: |
           curl -O https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
-      - name: Setup debug session
-        uses: csexton/debugger-action@master
       - name: Initialize vcpkg
         uses: johnwason/vcpkg-action@v4
         with:
           pkgs: argparse dlib fmt jsoncpp opencv spdlog
           triplet: x64-windows-static
           token: ${{ github.token }}
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
