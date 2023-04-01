@@ -27,7 +27,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: ${{ env.VCPKG_ROOT }}
-          vcpkgGitCommitId: ${{ env.vcpkgCommitId }}
+          vcpkgGitCommitId: ${{ env.vcpkgGitCommitId }}
           vcpkgJsonGlob: '**/vcpkg.json'
       - name: Run CMake
         uses: lukka/run-cmake@v10
