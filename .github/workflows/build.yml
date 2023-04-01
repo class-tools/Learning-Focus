@@ -12,8 +12,8 @@ jobs:
       matrix:
         config: [debug, release]
     env:
-      pkgs: argparse dlib fmt jsoncpp opencv spdlog
       VCPKG_ROOT: ${{ format('{0}/vcpkg', github.workspace) }}
+      vcpkgGitCommitId: 69efe9cc2df0015f0bb2d37d55acde4a75c9a25b
     runs-on: windows-latest
     steps:
       - name: Checkout repository
@@ -24,11 +24,11 @@ jobs:
         run: |
           curl -O https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
       - name: Initialize vcpkg
-        uses: johnwason/vcpkg-action@v4
+        uses: lukka/run-vcpkg@v11
         with:
-          pkgs: ${{ env.pkgs }}
-          triplet: x64-windows-static
-          token: ${{ github.token }}
+          vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+          vcpkgGitCommitId: ${{ env.vcpkgCommitId }}
+          vcpkgJsonGlob: ${{ format('{0}/vcpkg.json', github.workspace) }}
       - name: Run CMake
         uses: lukka/run-cmake@v10
         with:

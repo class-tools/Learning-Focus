@@ -35,7 +35,7 @@ if(NOT DEFINED VCPKG_ROOT)
 	endif()
 endif()
 
-include_directories("${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/include")
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include")
 find_package(argparse CONFIG REQUIRED)
 find_package(dlib CONFIG REQUIRED)
 find_package(fmt CONFIG REQUIRED)

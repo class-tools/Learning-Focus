@@ -9,6 +9,7 @@ jobs:
     name: Analyze
     env:
       VCPKG_ROOT: ${{ format('{0}/vcpkg', github.workspace) }}
+      vcpkgGitCommitId: 69efe9cc2df0015f0bb2d37d55acde4a75c9a25b
     runs-on: windows-latest
     permissions:
       security-events: write
@@ -21,14 +22,11 @@ jobs:
         run: |
           curl -O https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
       - name: Initialize vcpkg
-        uses: johnwason/vcpkg-action@v4
+        uses: lukka/run-vcpkg@v11
         with:
-          pkgs: argparse dlib fmt jsoncpp opencv spdlog
-          triplet: x64-windows-static
-          token: ${{ github.token }}
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ failure() }}
+          vcpkgDirectory: ${{ env.VCPKG_ROOT }}
+          vcpkgGitCommitId: ${{ env.vcpkgCommitId }}
+          vcpkgJsonGlob: ${{ format('{0}/vcpkg.json', github.workspace) }}
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
@@ -39,5 +37,8 @@ jobs:
         with:
           configurePreset: windows-release
           buildPreset: windows-release
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v3
+        if: ${{ failure() }}
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2
