@@ -37,8 +37,5 @@ jobs:
         with:
           configurePreset: windows-release
           buildPreset: windows-release
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v3
-        if: ${{ failure() }}
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v2

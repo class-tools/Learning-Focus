@@ -35,6 +35,10 @@ if(NOT DEFINED VCPKG_ROOT)
 	endif()
 endif()
 
+if(DEFINED ENV{CI})
+	set(VCPKG_INSTALL_OPTIONS "--clean-after-build")
+endif()
+
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/vcpkg_installed/${VCPKG_TARGET_TRIPLET}/include")
 find_package(argparse CONFIG REQUIRED)
 find_package(dlib CONFIG REQUIRED)
