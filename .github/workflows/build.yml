@@ -20,9 +20,6 @@ jobs:
         uses: actions/checkout@v3
       - name: Use MSVC development command line
         uses: ilammy/msvc-dev-cmd@v1
-      - name: Download model
-        run: |
-          curl -O https://raw.githubusercontent.com/fenollp/data.shape_predictor_68_face_landmarks/main/shape_predictor_68_face_landmarks.dat
       - name: Initialize vcpkg
         uses: lukka/run-vcpkg@v11
         with:

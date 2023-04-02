@@ -48,8 +48,8 @@ find_package(OpenCV CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(LF argparse::argparse dlib::dlib fmt::fmt jsoncpp_static JsonCpp::JsonCpp opencv_core opencv_highgui opencv_imgproc opencv_videoio spdlog::spdlog)
 
-if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/shape_predictor_68_face_landmarks.dat)
-	message(FATAL_ERROR "Cannot find shape_predictor_68_face_landmarks.dat.\nDownload and decompress it from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2.")
+if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/shape_predictor_68_face_landmarks.dat)
+	file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shape_predictor_68_face_landmarks.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+elseif()
+	message(WARNING "Cannot find shape_predictor_68_face_landmarks.dat.\nDownload and decompress it from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2.")
 endif()
-
-file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/shape_predictor_68_face_landmarks.dat DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
