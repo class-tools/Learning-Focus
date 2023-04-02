@@ -33,7 +33,9 @@ struct timestamp {
 	int32_t Hour = 0;
 	int32_t Minute = 0;
 	int32_t Second = 0;
-	int32_t WeekDay = 0;
+	int32_t MilliSecond = 0;
+	int32_t MicroSecond = 0;
+	int32_t NanoSecond = 0;
 };
 
 #ifdef _WIN32

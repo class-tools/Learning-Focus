@@ -42,13 +42,12 @@ int32_t main(int32_t _argc, char* _argv[]) {
 	dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> predictor;
 	dlib::correlation_tracker tracker;
 	bool status = false;
-	int32_t totalgood = 0;
-	int32_t totalbad = 0;
-	time_t timestart = 0;
-	time_t timeend = 0;
+	double totalgood = 0;
+	double totalbad = 0;
+	std::chrono::system_clock::time_point timestart;
 	cv::namedWindow("Face", cv::WINDOW_AUTOSIZE);
 	while (true) {
-		time(&timestart);
+		timestart = std::chrono::system_clock::now();
 		cv::Mat frame;
 		cap >> frame;
 		if (frame.empty()) {
@@ -107,11 +106,11 @@ int32_t main(int32_t _argc, char* _argv[]) {
 				}
 			}
 		}
-		time(&timeend);
+		double differ = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()) - std::chrono::duration_cast<std::chrono::milliseconds>(timestart.time_since_epoch())).count() / static_cast<double>(60000);
 		if (!status) {
-			totalbad += difftime(timeend, timestart);
+			totalgood += differ;
 		} else {
-			totalgood += difftime(timeend, timestart);
+			totalbad += differ;
 		}
 		cv::imshow("Face", frame);
 		if (cv::waitKey(1) == 27) {
@@ -120,7 +119,7 @@ int32_t main(int32_t _argc, char* _argv[]) {
 	}
 	cap.release();
 	cv::destroyAllWindows();
-	std::cout << fmt::format("Total good studying time (Minute): {:.5f}", static_cast<double>(totalgood) / 60) << std::endl;
-	std::cout << fmt::format("Total bad studying time (Minute): {:.5f}", static_cast<double>(totalbad) / 60) << std::endl;
+	std::cout << fmt::format("Total good studying time (Minute): {:.5f}", totalgood) << std::endl;
+	std::cout << fmt::format("Total bad studying time (Minute): {:.5f}", totalbad) << std::endl;
 	return 0;
 }

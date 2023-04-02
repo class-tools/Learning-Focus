@@ -7,10 +7,10 @@ Contributors: ren-yc
 
 timestamp GetTimestamp() {
 	// Get current time and return a timestamp object.
-	time_t rawtime = 0;
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	time_t rawtime = std::chrono::system_clock::to_time_t(now);
 	tm ptminfo = {};
 	timestamp NowTime = {};
-	time(&rawtime);
 #ifdef _WIN32
 	localtime_s(&ptminfo, &rawtime);
 #elif linux
@@ -22,6 +22,9 @@ timestamp GetTimestamp() {
 	NowTime.Hour = ptminfo.tm_hour;
 	NowTime.Minute = ptminfo.tm_min;
 	NowTime.Second = ptminfo.tm_sec;
+	NowTime.MilliSecond = (std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000).count();
+	NowTime.MicroSecond = (std::chrono::duration_cast<std::chrono::microseconds>(now.time_since_epoch()) % 1000000).count() % 1000;
+	NowTime.NanoSecond = (std::chrono::duration_cast<std::chrono::nanoseconds>(now.time_since_epoch()) % 1000000000).count() % 1000;
 	return NowTime;
 }
 
