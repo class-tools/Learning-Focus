@@ -16,3 +16,13 @@ void LF_Log_Args() {
 	SPDLOG_INFO(fmt::format("Camera id: {}", ARG_parser.get<int32_t>("-c")));
 	SPDLOG_INFO(fmt::format("Debug mode: {}", ARG_parser.get<bool>("-d") ? "Enabled" : "Disabled"));
 }
+
+void LF_Pre_ModelExistence() {
+	// Check model file existence.
+	if (!std::filesystem::is_regular_file(fmt::format("{}/shape_predictor_68_face_landmarks.dat", GetExecDir()))) {
+		SPDLOG_CRITICAL("Cannot find shape_predictor_68_face_landmarks.dat");
+		std::cout << "Cannot find shape_predictor_68_face_landmarks.dat." << std::endl;
+		std::cout << "Download and decompress it from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2." << std::endl;
+		std::exit(0);
+	}
+}

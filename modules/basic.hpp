@@ -11,6 +11,10 @@ Contributors: ren-yc
 #include <fstream>
 #include <iostream>
 
+#ifdef linux
+#include <unistd.h>
+#endif
+
 #define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_DEBUG
 #include <argparse/argparse.hpp>
 #include <dlib/image_processing.h>
@@ -46,7 +50,7 @@ const std::string LF_path_data = fmt::format("{}/.class-tools/LF", getenv("HOME"
 std::string LF_version;
 std::ifstream fin;
 std::ofstream fout;
-argparse::ArgumentParser ARG_parser("Learning Focus", LF_VER_MAIN, argparse::default_arguments::all);
+argparse::ArgumentParser ARG_parser("LF", LF_VER_MAIN, argparse::default_arguments::all);
 Json::Reader JSON_Reader;
 Json::StreamWriterBuilder JSON_SWB;
 std::unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());

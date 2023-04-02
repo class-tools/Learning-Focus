@@ -31,12 +31,7 @@ int32_t main(int32_t _argc, char* _argv[]) {
 		std::cout << "Cannot open camera." << std::endl;
 		std::exit(0);
 	}
-	if (!std::filesystem::is_regular_file(fmt::format("{}/shape_predictor_68_face_landmarks.dat", GetExecDir()))) {
-		SPDLOG_CRITICAL("Cannot find shape_predictor_68_face_landmarks.dat");
-		std::cout << "Cannot find shape_predictor_68_face_landmarks.dat." << std::endl;
-		std::cout << "Download and decompress it from http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2." << std::endl;
-		std::exit(0);
-	}
+	LF_Pre_ModelExistence();
 	dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
 	dlib::shape_predictor predictor;
 	dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> predictor;
@@ -101,7 +96,7 @@ int32_t main(int32_t _argc, char* _argv[]) {
 				}
 			}
 			if (ARG_parser.get<bool>("-d")) {
-				for (int32_t i = 0; i < 68; i++) {
+				for (uint8_t i = 0; i < 68; i++) {
 					cv::circle(frame, cv::Point(landmarks.part(i).x(), landmarks.part(i).y()), 2, cv::Scalar(255, 255, 255), -1);
 				}
 			}
