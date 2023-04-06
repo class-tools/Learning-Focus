@@ -14,24 +14,37 @@ Contributors: ren-yc
 int32_t main(int32_t _argc, char* _argv[]) {
 	LF_Init();
 	try {
-		ARG_parser.parse_args(_argc, _argv);
+		Arg_Parser.parse_args(_argc, _argv);
 	} catch (...) {
 		SPDLOG_CRITICAL("Invalid command line arguments");
 		std::cout << "Invalid command line arguments." << std::endl;
-		std::cout << ARG_parser << std::endl;
+		std::cout << Arg_Parser << std::endl;
 		std::exit(0);
 	}
 	LF_Log_Args();
+	if (Arg_Parser.get<bool>("-dl")) {
+		LF_Data_List();
+		std::exit(0);
+	}
+	if (Arg_Parser.get<std::string>("-ds") != "") {
+		std::pair<double, double> ret = LF_Data_Get(Arg_Parser.get<std::string>("-ds"));
+		if (ret.first == 0 && ret.second == 0) {
+			std::cout << "Cannot find data." << std::endl;
+			std::exit(0);
+		}
+		LF_Func_Visualization(ret.first, ret.second, Arg_Parser.get<std::string>("-ds"));
+		std::exit(0);
+	}
 	cv::VideoCapture cap;
 	cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
-	cap.open(ARG_parser.get<int32_t>("-c"), cv::CAP_DSHOW);
+	cap.open(Arg_Parser.get<int32_t>("-c"), cv::CAP_DSHOW);
 	dlib::sleep(1000);
 	if (!cap.isOpened()) {
 		SPDLOG_CRITICAL("Cannot open camera");
 		std::cout << "Cannot open camera." << std::endl;
 		std::exit(0);
 	}
-	LF_Pre_ModelExistence();
+	LF_Func_ModelExistence();
 	dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
 	dlib::shape_predictor predictor;
 	dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> predictor;
@@ -95,7 +108,7 @@ int32_t main(int32_t _argc, char* _argv[]) {
 					}
 				}
 			}
-			if (ARG_parser.get<bool>("-d")) {
+			if (Arg_Parser.get<bool>("-e")) {
 				for (uint8_t i = 0; i < 68; i++) {
 					cv::circle(frame, cv::Point(landmarks.part(i).x(), landmarks.part(i).y()), 2, cv::Scalar(255, 255, 255), -1);
 				}
@@ -114,7 +127,7 @@ int32_t main(int32_t _argc, char* _argv[]) {
 	}
 	cap.release();
 	cv::destroyAllWindows();
-	std::cout << fmt::format("Total good studying time (Minute): {:.5f}", totalgood) << std::endl;
-	std::cout << fmt::format("Total bad studying time (Minute): {:.5f}", totalbad) << std::endl;
+	LF_Data_Save(totalgood, totalbad, GetTimestampString());
+	LF_Func_Visualization(totalgood, totalbad);
 	return 0;
 }

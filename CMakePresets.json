@@ -8,7 +8,9 @@
 			"binaryDir": "${sourceDir}/out/build/${presetName}",
 			"cacheVariables": {
 				"CMAKE_C_COMPILER": "cl.exe",
-				"CMAKE_CXX_COMPILER": "cl.exe"
+				"CMAKE_CXX_COMPILER": "cl.exe",
+				"CMAKE_C_LINK_EXECUTABLE": "link.exe",
+				"CMAKE_CXX_LINK_EXECUTABLE": "link.exe"
 			},
 			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
 			"condition": {
@@ -24,7 +26,9 @@
 			"binaryDir": "${sourceDir}/out/build/${presetName}",
 			"cacheVariables": {
 				"CMAKE_C_COMPILER": "gcc",
-				"CMAKE_CXX_COMPILER": "g++"
+				"CMAKE_CXX_COMPILER": "g++",
+				"CMAKE_C_LINK_EXECUTABLE": "ld",
+				"CMAKE_CXX_LINK_EXECUTABLE": "ld"
 			},
 			"toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
 			"condition": {

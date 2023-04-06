@@ -5,6 +5,7 @@
 		"dlib",
 		"fmt",
 		"jsoncpp",
+		"mathgl",
 		"opencv",
 		"spdlog"
 	]

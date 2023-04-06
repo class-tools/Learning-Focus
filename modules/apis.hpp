@@ -28,6 +28,12 @@ timestamp GetTimestamp() {
 	return NowTime;
 }
 
+std::string GetTimestampString() {
+	// Get current time and return a string of timestamp.
+	timestamp now = GetTimestamp();
+	return fmt::format("{:04}{:02}{:02}{:02}{:02}{:02}", now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
+}
+
 std::string GetExecDir() {
 	// Get program executable directory.
 #ifdef _WIN32

@@ -23,6 +23,7 @@ Contributors: ren-yc
 #include <dlib/opencv.h>
 #include <fmt/format.h>
 #include <json/json.h>
+#include <mgl2/mgl.h>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -43,16 +44,14 @@ struct timestamp {
 };
 
 #ifdef _WIN32
-const std::string LF_path_data = fmt::format("{}/.class-tools/LF", getenv("APPDATA"));
+const std::string LF_Path_Data = fmt::format("{}/.class-tools/LF", getenv("APPDATA"));
 #elif linux
-const std::string LF_path_data = fmt::format("{}/.class-tools/LF", getenv("HOME"));
+const std::string LF_Path_Data = fmt::format("{}/.class-tools/LF", getenv("HOME"));
 #endif
-std::string LF_version;
-std::ifstream fin;
-std::ofstream fout;
-argparse::ArgumentParser ARG_parser("LF", LF_VER_MAIN, argparse::default_arguments::all);
-Json::Reader JSON_Reader;
-Json::StreamWriterBuilder JSON_SWB;
-std::unique_ptr<Json::StreamWriter> JSON_SW(JSON_SWB.newStreamWriter());
-std::shared_ptr<spdlog::sinks::basic_file_sink_mt> LOG_sink;
-std::shared_ptr<spdlog::logger> LOG_logger;
+std::string LF_Version;
+argparse::ArgumentParser Arg_Parser("LF", LF_VER_MAIN, argparse::default_arguments::all);
+Json::Reader Json_Reader;
+Json::StreamWriterBuilder Json_SWB;
+std::unique_ptr<Json::StreamWriter> Json_SW(Json_SWB.newStreamWriter());
+std::shared_ptr<spdlog::sinks::basic_file_sink_mt> Log_Sink;
+std::shared_ptr<spdlog::logger> Log_Logger;
