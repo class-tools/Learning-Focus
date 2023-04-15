@@ -21,6 +21,8 @@ void LF_Init_Bind() {
 	Arg_Parser.add_argument("-dl", "--datalist").default_value<bool>(false).implicit_value(true).nargs(0).help("show data list");
 	Arg_Parser.add_argument("-ds", "--datashow").default_value<std::string>("").nargs(1).help("visualize data with the key specified");
 	Arg_Parser.add_argument("-e", "--extra").default_value<bool>(false).implicit_value(true).nargs(0).help("show extra information");
+	Arg_Parser.add_argument("-ww", "--windowwidth").default_value<int32_t>(640).nargs(1).help("specify the width of the window").scan<'i', int32_t>();
+	Arg_Parser.add_argument("-wh", "--windowheight").default_value<int32_t>(480).nargs(1).help("specify the height of the window").scan<'i', int32_t>();
 	Json_SWB.settings_ = []() {
 		Json::Value def;
 		Json::StreamWriterBuilder::setDefaults(&def);

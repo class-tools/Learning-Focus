@@ -6,11 +6,8 @@ cmake_minimum_required(VERSION 3.16.0 FATAL_ERROR)
 
 project(LF)
 
-add_executable(LF "LF.cpp" "version.hpp" "modules/apis.hpp" "modules/basic.hpp" "modules/file-process.hpp" "modules/functions.hpp" "modules/init.hpp" "$<$<BOOL:MSVC>:LF.rc>")
-
-set_property(TARGET LF PROPERTY CXX_STANDARD 20)
-
 if(MSVC)
+	add_executable(LF "LF.cpp" "version.hpp" "modules/apis.hpp" "modules/basic.hpp" "modules/file-process.hpp" "modules/functions.hpp" "modules/init.hpp" "LF.rc")
 	if(POLICY CMP0091)
 		cmake_policy(SET CMP0091 NEW)
 	endif()
@@ -23,9 +20,12 @@ if(MSVC)
 	target_compile_options(LF PRIVATE /W3)
 	set(VCPKG_TARGET_TRIPLET "x64-windows-static")
 else()
+	add_executable(LF "LF.cpp" "version.hpp" "modules/apis.hpp" "modules/basic.hpp" "modules/file-process.hpp" "modules/functions.hpp" "modules/init.hpp")
 	target_compile_options(LF PRIVATE -Wall -Wextra -Wpedantic)
 	set(VCPKG_TARGET_TRIPLET "x64-linux")
 endif()
+
+set_property(TARGET LF PROPERTY CXX_STANDARD 20)
 
 if(NOT DEFINED VCPKG_ROOT)
 	if(DEFINED ENV{VCPKG_ROOT})

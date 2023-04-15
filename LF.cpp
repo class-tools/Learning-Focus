@@ -36,7 +36,6 @@ int32_t main(int32_t _argc, char* _argv[]) {
 		std::exit(0);
 	}
 	cv::VideoCapture cap;
-	cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M', 'J', 'P', 'G'));
 	cap.open(Arg_Parser.get<int32_t>("-c"), cv::CAP_DSHOW);
 	dlib::sleep(1000);
 	if (!cap.isOpened()) {
@@ -53,7 +52,8 @@ int32_t main(int32_t _argc, char* _argv[]) {
 	double totalgood = 0;
 	double totalbad = 0;
 	std::chrono::system_clock::time_point timestart;
-	cv::namedWindow("Face", cv::WINDOW_AUTOSIZE);
+	cv::namedWindow("Face", cv::WINDOW_KEEPRATIO);
+	cv::resizeWindow("Face", Arg_Parser.get<int32_t>("-ww"), Arg_Parser.get<int32_t>("-wh"));
 	while (true) {
 		timestart = std::chrono::system_clock::now();
 		cv::Mat frame;
