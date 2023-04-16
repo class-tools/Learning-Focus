@@ -4,7 +4,6 @@ This source code file is under MIT License.
 Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: ren-yc
 */
-
 void LF_Init_Dir() {
 	// Initialize directories.
 	if (std::filesystem::is_directory(LF_Path_Data)) {

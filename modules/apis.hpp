@@ -4,7 +4,6 @@ This source code file is under MIT License.
 Copyright (c) 2022 - 2023 Class Tools Develop Team
 Contributors: ren-yc
 */
-
 timestamp GetTimestamp() {
 	// Get current time and return a timestamp object.
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
