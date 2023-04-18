@@ -9,7 +9,7 @@ jobs:
     name: Analyze
     env:
       VCPKG_ROOT: ${{ format('{0}/vcpkg', github.workspace) }}
-      vcpkgGitCommitId: 69efe9cc2df0015f0bb2d37d55acde4a75c9a25b
+      vcpkgGitCommitId: 501db0f17ef6df184fcdbfbe0f87cde2313b6ab1
     runs-on: windows-latest
     permissions:
       security-events: write
